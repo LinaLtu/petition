@@ -1,0 +1,52 @@
+body {
+    background-color: white;
+    /* #7ed4d1; */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* Petition Page  */
+
+.main {
+    width: 700px;
+}
+
+.form {
+    /* ??? */
+    align-self: center;
+    margin: 10px;
+}
+
+h1,
+h3 {
+    text-align: center;
+    padding: 10px;
+}
+
+#submit-btn {
+    display: block;
+    margin: 0 auto;
+    padding: 15px 25px;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    letter-spacing: 3px;
+    border-radius: 7px;
+}
+
+#ananas {
+    width: 600px;
+    margin: auto 0;
+}
+
+.picture {
+    align-self: center;
+}
+
+#canvas {
+    border: 1px dashed black;
+    margin: 10px;
+}
