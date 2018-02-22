@@ -1,5 +1,5 @@
 body {
-    background-color: white;
+    background-color: #ffeecc;
     /* #7ed4d1; */
     margin: 0;
     padding: 0;
@@ -15,11 +15,12 @@ body {
 
 .form {
     /* ??? */
-    align-self: center;
+    text-align: center;
     margin: 10px;
 }
 
 h1,
+h2,
 h3 {
     text-align: center;
     padding: 10px;
@@ -43,7 +44,17 @@ h3 {
 }
 
 .picture {
-    align-self: center;
+    text-align: center;
+}
+
+.picture-thanks,
+.picture-thanks-sign {
+    margin: 10px;
+    text-align: center;
+}
+
+.picture-thanks-sign {
+    border: 1px solid grey;
 }
 
 #canvas {
@@ -56,4 +67,17 @@ h3 {
     font-size: 20px;
     font-weight: bold;
     color: red;
+}
+
+.signers-link {
+    font-size: 30px;
+    margin: 20px;
+    text-align: center;
+}
+
+.signed-names {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px dashed grey;
 }

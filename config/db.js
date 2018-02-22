@@ -8,15 +8,6 @@ function insertSignatures(first, last, signature) {
     const q = `INSERT INTO signatures (first, last, signature) VALUES ($1, $2, $3) RETURNING id`;
     const params = [first, last, signature];
 
-    //we want back the id
-    // result.rows will return the ID
-
-    //in the post route, when the user has submitted the sig, delete the res.cookie('hasCookie', true)
-    //then do:
-    //req.session.signatureId = results.rows[0].id
-    //if(req.session.signatureId) { }
-    //SELECT signature FROM signatures WHERE id = req.session.signatureId;
-
     return db
         .query(q, params)
         .then(results => {
@@ -38,5 +29,29 @@ function getSignature(signatureId) {
         .catch(err => console.log(err));
 }
 
+function getSignedNames() {
+    const q = `SELECT first, last FROM signatures`;
+
+    return db
+        .query(q)
+        .then(signedNames => {
+            return signedNames;
+        })
+        .catch(err => console.log(err));
+}
+
+function countSignatures() {
+    const q = `SELECT COUNT (*) FROM signatures`;
+
+    return db
+        .query(q)
+        .then(signatureCount => {
+            return signatureCount;
+        })
+        .catch(err => console.log(err));
+}
+
 module.exports.insertSignatures = insertSignatures;
 module.exports.getSignature = getSignature;
+module.exports.getSignedNames = getSignedNames;
+module.exports.countSignatures = countSignatures;

@@ -6,6 +6,8 @@ const cookieSession = require("cookie-session");
 const db = require("./config/db.js");
 const insertSignatures = db.insertSignatures;
 const getSignature = db.getSignature;
+const getSignedNames = db.getSignedNames;
+const countSignatures = db.countSignatures;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -24,12 +26,17 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-    res.render("welcome", {
-        layout: "main"
-    });
+    if (!req.session.signatureId) {
+        res.render("welcome", {
+            layout: "main"
+        });
+    } else {
+        res.redirect("/thankyou");
+    }
 });
 
 app.post("/", (req, res) => {
+    console.log("we are here");
     if (req.body.first && req.body.last && req.body.signature) {
         insertSignatures(req.body.first, req.body.last, req.body.signature)
             .then(results => {
@@ -49,17 +56,28 @@ app.post("/", (req, res) => {
     }
 });
 
+///ADD countSignatures TO THE THANK YOU PAGE!
+
 app.get("/thankyou", (req, res) => {
     if (req.session.signatureId) {
-        console.log(req.session.signatureId); //<- breaks here
+        console.log(req.session.signatureId);
         getSignature(req.session.signatureId).then(idResults => {
-            console.log(idResults);
             res.render("thankyou", {
                 layout: "main",
                 signature: idResults.rows[0].signature
             });
         });
     }
+});
+
+app.get("/signed", (req, res) => {
+    getSignedNames().then(signedNames => {
+        console.log(signedNames);
+        res.render("signed", {
+            layout: "main",
+            signedNames: signedNames.rows
+        });
+    });
 });
 
 app.listen(8080, () => {
