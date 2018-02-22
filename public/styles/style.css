@@ -50,3 +50,10 @@ h3 {
     border: 1px dashed black;
     margin: 10px;
 }
+
+.error {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
+}
