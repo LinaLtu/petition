@@ -1,0 +1,22 @@
+<div class="main">
+
+    <div class="picture">
+        <img src="/pizza.jpg" id="ananas">
+    </div>
+
+        <h1>Please log in</h1>
+
+    <div class="form">
+        <form method="post">
+              <input type="text" name="email" value="" placeholder="Email Address" class="input-field"><br/><br/>
+              <input type="text" name="password" value="" placeholder="Password" class="input-field"><br/><br/>
+              <br><br>
+              {{#error}}
+              <div class="error">Oooops! Something went wrong. Try again</div>
+              {{/error}}
+              <input type="submit" value="Log In" id="submit-btn">
+        </form>
+    </div>
+
+
+</div>
