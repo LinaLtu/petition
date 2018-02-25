@@ -10,7 +10,7 @@ const getSignature = db.getSignature;
 const getSignedNames = db.getSignedNames;
 const countSignatures = db.countSignatures;
 const insertRegistrationInfo = db.insertRegistrationInfo;
-const getPasswordFromDB = db.getPasswordFromDB;
+const getUserInfo = db.getUserInfo;
 
 var id;
 var userId;
@@ -74,7 +74,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    console.log("we are here");
     if (req.body.first && req.body.last && req.body.signature) {
         insertSignatures(req.body.first, req.body.last, req.body.signature)
             .then(results => {
@@ -157,7 +156,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
     if (req.body.email && req.body.password) {
-        getPasswordFromDB(req.body.email)
+        getUserInfo(req.body.email)
             .then(hashedPassword =>
                 checkPassword(
                     req.body.password,

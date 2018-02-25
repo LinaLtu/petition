@@ -1,6 +1,10 @@
 body {
-    background-color: #ffeecc;
+    font-family: "Amatic SC", cursive;
+    /* background-color: #ffeecc; */
     /* #7ed4d1; */
+    background-attachment: fixed;
+    background-image: url("/background-img.jpg");
+    background-repeat: no-repeat;
     margin: 0;
     padding: 0;
     display: flex;
@@ -10,9 +14,18 @@ body {
 /* Petition Page  */
 
 .main {
-    width: 700px;
+    width: 800px;
+    background-color: #f1a039;
+    padding: 10px 40px 10px 40px;
 }
 
+.middle-content {
+    width: 100%;
+    height: auto;
+    /* background-color: white; */
+    /* padding: 10px 40px 10px 40px; */
+    margin-right: 100px;
+}
 .form {
     /* ??? */
     text-align: center;
@@ -23,7 +36,17 @@ h1,
 h2,
 h3 {
     text-align: center;
-    padding: 10px;
+    padding: 30px;
+    margin: 0;
+}
+
+h1 {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 25px;
 }
 
 #submit-btn {
@@ -46,6 +69,8 @@ h3 {
 .picture {
     text-align: center;
     margin: 20px;
+    opacity: 0.8;
+    /* border: 1px solid black; */
 }
 
 .picture-thanks,

@@ -64,7 +64,7 @@ function insertRegistrationInfo(first, last, email, password) {
         .catch(err => console.log(err));
 }
 
-function getPasswordFromDB(email) {
+function getUserInfo(email) {
     const q = `SELECT * FROM users WHERE email = $1`;
     const param = [email];
     return db.query(q, param);
@@ -75,4 +75,4 @@ module.exports.getSignature = getSignature;
 module.exports.getSignedNames = getSignedNames;
 module.exports.countSignatures = countSignatures;
 module.exports.insertRegistrationInfo = insertRegistrationInfo;
-module.exports.getPasswordFromDB = getPasswordFromDB;
+module.exports.getUserInfo = getUserInfo;
