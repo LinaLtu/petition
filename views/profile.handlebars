@@ -1,0 +1,24 @@
+<div class="main">
+    <h1>Let us get to know you better!</h1>
+
+    <div class="picture">
+        <img src="/pizza.jpg" id="ananas">
+    </div>
+
+    <div class="form">
+        <form method="post">
+
+              <input type="text" name="age" value="" placeholder="Age" class="input-field"><br/><br/>
+              <input type="text" name="city" value="" placeholder="City" class="input-field"><br/><br/>
+              <input type="text" name="url" value="" placeholder="Homepage" class="input-field"><br/><br/>
+              <br>
+              {{#error}}
+              <div class="error">Oooops! Something went wrong. Try again</div>
+              {{/error}}
+              <br>
+              <input type="submit" value="Continue" id="submit-btn">
+        </form>
+    </div>
+
+
+</div>

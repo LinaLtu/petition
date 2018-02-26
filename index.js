@@ -11,6 +11,9 @@ const getSignedNames = db.getSignedNames;
 const countSignatures = db.countSignatures;
 const insertRegistrationInfo = db.insertRegistrationInfo;
 const getUserInfo = db.getUserInfo;
+const insertProfileInfo = db.insertProfileInfo;
+const getSignedInfo = db.getSignedInfo;
+const getSignedInfoByCity = db.getSignedInfoByCity;
 
 var id;
 var userId;
@@ -74,14 +77,16 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-    if (req.body.first && req.body.last && req.body.signature) {
-        insertSignatures(req.body.first, req.body.last, req.body.signature)
+    console.log(req.session.userId);
+    if (req.body.signature) {
+        insertSignatures(req.body.signature, req.session.userId)
             .then(results => {
                 req.session.signatureId = results.rows[0].id;
                 res.redirect("/thankyou");
             })
             .catch(() => {
                 res.render("welcome", {
+                    layout: "main",
                     error: true
                 });
             });
@@ -96,7 +101,7 @@ app.post("/", (req, res) => {
 ///ADD countSignatures TO THE THANK YOU PAGE!
 
 app.get("/thankyou", (req, res) => {
-    if (req.session.signatureId) {
+    if (req.session.signatureId && req.session.userId) {
         //console.log(req.session.signatureId);
         getSignature(req.session.signatureId).then(idResults => {
             res.render("thankyou", {
@@ -123,16 +128,17 @@ app.post("/register", (req, res) => {
                     hash
                 ).then(insertRegistrationInfo => {
                     id = insertRegistrationInfo.rows[0].id;
-                    req.session.id = id;
+                    req.session.userId = id;
                     console.log(
                         "This is your id: " + insertRegistrationInfo.rows[0].id
                     );
                     console.log("You've registered");
-                    res.redirect("/");
+                    res.redirect("/profile");
                 })
             )
             .catch(() => {
                 res.render("register", {
+                    layout: "main",
                     error: true
                 });
             });
@@ -145,7 +151,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-    if (userId) {
+    if (req.session.userId) {
         res.redirect("/");
     } else {
         res.render("login", {
@@ -172,8 +178,8 @@ app.post("/login", (req, res) => {
                             layout: "main"
                         });
                     } else {
-                        console.log("We are here");
                         res.render("login", {
+                            layout: "main",
                             error: true
                         });
                     }
@@ -205,10 +211,57 @@ app.get("/signed", (req, res) => {
     });
 });
 
+app.get("/petition/signers", (req, res) => {
+    getSignedInfo().then(signedInfo => {
+        console.log(signedInfo);
+        res.render("petition/signers", {
+            layout: "main",
+            signedInfo: signedInfo.rows
+        });
+    });
+});
+
+app.get("/petition/signers/:city", (req, res) => {
+    getSignedInfoByCity(req.params.city).then(signedInfoByCity => {
+        console.log(signedInfoByCity);
+        res.render("petition/signers", {
+            layout: "main",
+            signedInfo: signedInfoByCity.rows
+        });
+    });
+});
+
 app.get("/register", (req, res) => {
-    res.render("register", {
+    if (req.session.userId) {
+        res.redirect("/profile");
+    } else {
+        res.render("register", {
+            layout: "main"
+        });
+    }
+});
+
+app.get("/profile", (req, res) => {
+    res.render("profile", {
         layout: "main"
     });
+});
+
+app.post("/profile", (req, res) => {
+    insertProfileInfo(
+        req.body.age,
+        req.body.city,
+        req.body.url,
+        req.session.userId
+    )
+        .then(res.redirect("/"))
+        .catch(err => {
+            console.log("Something went wrong", err);
+            res.render("profile", {
+                layout: "main",
+                error: true
+            });
+        });
 });
 
 app.listen(8080, () => {

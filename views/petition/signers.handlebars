@@ -1,0 +1,17 @@
+<div class="main">
+    <div class="picture-thanks">
+        <img src="/pizza.jpg" id="ananas">
+    </div>
+    <h2>Brave souls who signed our petition to outlaw putting pineapple on pizza</h2>
+
+    <div class="signed-names">
+        {{#each signedInfo}}
+
+            <p><a href="http://{{url}}">
+                {{first}} {{last}} </a>
+                  ({{age}}, <a href="signers/{{city}}">{{city}}</a>)</p>
+        {{/each}}
+    </div>
+
+
+</div>
