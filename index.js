@@ -15,6 +15,12 @@ const insertProfileInfo = db.insertProfileInfo;
 const getSignedInfo = db.getSignedInfo;
 const getSignedInfoByCity = db.getSignedInfoByCity;
 const populateEditFields = db.populateEditFields;
+const insertIntoProfileInfoUsers = db.insertIntoProfileInfoUsers;
+const updatePassword = db.updatePassword;
+const insertIntoUserProfileInfo = db.insertIntoUserProfileInfo;
+const checkIfUserProfileRowExists = db.checkIfUserProfileRowExists;
+const updateUsersTable = db.updateUsersTable;
+const updateProfileInfoUsers = db.updateProfileInfoUsers;
 
 var id;
 var userId;
@@ -256,21 +262,46 @@ app.get("/profile/edit", (req, res) => {
             infoForEdit: infoForEdit.rows[0]
         });
     });
-
-    //query for the info an populate the info fields
-    //don't populare the passwords field
 });
 
 app.post("/profile/edit", (req, res) => {
-    //we run an updato on two tables
+    //we run an update on two tables
     //one of the conditions: if a user doesn't have a row for optional info, (SELECT and then: if they don't have a row => INSERT, if they do -> UPDATE)
     //or add a row as soon as an user is created
 
     const { first, last, email, password, age, city, url } = req.body;
 
-    const { id } = req.session.user;
+    const { userId } = req.session;
 
-    //do two separare updates for two separete tables
+    function checkAndInsterUserProfiles() {
+        checkIfUserProfileRowExists(userId).then(doesExist => {
+            if (!doesExist) {
+                console.log("Row does not exist");
+                insertIntoProfileInfoUsers(userId, age, city, url);
+            } else {
+                console.log("Row does exist");
+                updateProfileInfoUsers(age, city, url, userId);
+            }
+        });
+    }
+
+    if (password) {
+        hashPassword(password)
+            .then(hash => {
+                updatePassword(hash).then(() => {
+                    updateUsersTable(first, last, email, userId).then(() => {
+                        checkAndInsterUserProfiles();
+                    });
+                });
+            })
+            .then(() => res.redirect("/thankyou"));
+    } else {
+        updateUsersTable(first, last, email, userId)
+            .then(() => {
+                checkAndInsterUserProfiles();
+            })
+            .then(() => res.redirect("/thankyou"));
+    }
 });
 
 app.post("/profile", (req, res) => {
