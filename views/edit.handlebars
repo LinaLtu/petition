@@ -1,0 +1,28 @@
+<div class="main">
+    <h1>Edit your profile</h1>
+
+    <div class="picture">
+        <img src="/pizza.jpg" id="ananas">
+    </div>
+
+    <div class="form">
+        <form method="post">
+
+              <input type="text" name="first" value="{{infoForEdit.first}}" placeholder="First Name" class="input-field"><br/><br/>
+              <input type="text" name="last" value="{{infoForEdit.last}}" placeholder="Last Name" class="input-field"><br/><br/>
+              <input type="text" name="email" value="{{infoForEdit.email}}" placeholder="Email Addresss" class="input-field"><br/><br/>
+              <input type="text" name="password" value="" placeholder="Password" class="input-field"><br/><br/>
+              <input type="text" name="age" value="{{infoForEdit.age}}" placeholder="Age" class="input-field"><br/><br/>
+              <input type="text" name="city" value="{{infoForEdit.city}}" placeholder="City" class="input-field"><br/><br/>
+              <input type="text" name="url" value="{{infoForEdit.url}}" placeholder="Homepage" class="input-field"><br/><br/>
+              <br>
+              {{#error}}
+              <div class="error">Oooops! Something went wrong. Try again</div>
+              {{/error}}
+              <br>
+              <input type="submit" value="Update" id="submit-btn">
+        </form>
+    </div>
+
+
+</div>

@@ -113,6 +113,22 @@ function getSignedInfoByCity(city) {
         .catch(err => console.log(err));
 }
 
+function populateEditFields(user_id) {
+    const q = `SELECT users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url FROM users
+    JOIN user_profiles
+    ON users.id = user_id
+    WHERE user_id = $1`;
+
+    const param = [user_id];
+
+    return db
+        .query(q, param)
+        .then(infoForEdit => {
+            return infoForEdit;
+        })
+        .catch(err => console.log(err));
+}
+
 module.exports.insertSignatures = insertSignatures;
 module.exports.getSignature = getSignature;
 module.exports.getSignedNames = getSignedNames;
@@ -122,3 +138,4 @@ module.exports.getUserInfo = getUserInfo;
 module.exports.insertProfileInfo = insertProfileInfo;
 module.exports.getSignedInfo = getSignedInfo;
 module.exports.getSignedInfoByCity = getSignedInfoByCity;
+module.exports.populateEditFields = populateEditFields;

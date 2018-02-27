@@ -14,6 +14,7 @@ const getUserInfo = db.getUserInfo;
 const insertProfileInfo = db.insertProfileInfo;
 const getSignedInfo = db.getSignedInfo;
 const getSignedInfoByCity = db.getSignedInfoByCity;
+const populateEditFields = db.populateEditFields;
 
 var id;
 var userId;
@@ -129,10 +130,10 @@ app.post("/register", (req, res) => {
                 ).then(insertRegistrationInfo => {
                     id = insertRegistrationInfo.rows[0].id;
                     req.session.userId = id;
-                    console.log(
-                        "This is your id: " + insertRegistrationInfo.rows[0].id
-                    );
-                    console.log("You've registered");
+                    // console.log(
+                    //     "This is your id: " + insertRegistrationInfo.rows[0].id
+                    // );
+                    // console.log("You've registered");
                     res.redirect("/profile");
                 })
             )
@@ -216,17 +217,18 @@ app.get("/petition/signers", (req, res) => {
         console.log(signedInfo);
         res.render("petition/signers", {
             layout: "main",
-            signedInfo: signedInfo.rows
+            signedInfo: signedInfo.rows,
+            cityPage: true
         });
     });
 });
 
 app.get("/petition/signers/:city", (req, res) => {
     getSignedInfoByCity(req.params.city).then(signedInfoByCity => {
-        console.log(signedInfoByCity);
         res.render("petition/signers", {
             layout: "main",
-            signedInfo: signedInfoByCity.rows
+            signedInfo: signedInfoByCity.rows,
+            cityPage: false
         });
     });
 });
@@ -245,6 +247,30 @@ app.get("/profile", (req, res) => {
     res.render("profile", {
         layout: "main"
     });
+});
+
+app.get("/profile/edit", (req, res) => {
+    populateEditFields(req.session.userId).then(infoForEdit => {
+        res.render("edit", {
+            layout: "main",
+            infoForEdit: infoForEdit.rows[0]
+        });
+    });
+
+    //query for the info an populate the info fields
+    //don't populare the passwords field
+});
+
+app.post("/profile/edit", (req, res) => {
+    //we run an updato on two tables
+    //one of the conditions: if a user doesn't have a row for optional info, (SELECT and then: if they don't have a row => INSERT, if they do -> UPDATE)
+    //or add a row as soon as an user is created
+
+    const { first, last, email, password, age, city, url } = req.body;
+
+    const { id } = req.session.user;
+
+    //do two separare updates for two separete tables
 });
 
 app.post("/profile", (req, res) => {

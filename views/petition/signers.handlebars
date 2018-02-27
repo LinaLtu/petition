@@ -8,8 +8,15 @@
         {{#each signedInfo}}
 
             <p><a href="http://{{url}}">
-                {{first}} {{last}} </a>
-                  ({{age}}, <a href="signers/{{city}}">{{city}}</a>)</p>
+                {{first}} {{last}}</a>
+                ({{age}},
+
+                {{#if ../cityPage}}
+                   <a href="/petition/signers/{{city}}">{{city}}</a>)
+                {{else}}
+                    {{city}})</p>
+                {{/if}}
+
         {{/each}}
     </div>
 
