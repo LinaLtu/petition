@@ -290,13 +290,21 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
             console.log("Does exist ", doesExist);
             if (!doesExist) {
                 // console.log("Row does not exist");
-                insertIntoProfileInfoUsers(userId, age, city, url);
-                res.redirect("/");
+                if (isNaN(age)) {
+                    res.redirect("/profile/edit");
+                } else {
+                    insertIntoProfileInfoUsers(userId, age, city, url);
+                    res.redirect("/");
+                }
             } else {
                 console.log("Req.body inside of checkUserInfo ", req.body);
-                updateProfileInfoUsers(age, city, url, userId);
-                console.log("Data inserted: ", age, city, url, userId);
-                res.redirect("/");
+                if (isNaN(age)) {
+                    res.redirect("/profile/edit");
+                } else {
+                    updateProfileInfoUsers(age, city, url, userId);
+                    console.log("Data inserted: ", age, city, url, userId);
+                    res.redirect("/");
+                }
             }
         });
     }
