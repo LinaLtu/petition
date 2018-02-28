@@ -112,3 +112,30 @@ h3 {
     width: 600px;
     padding: 10px;
 }
+
+@media screen and (max-width: 500px) {
+    #ananas {
+        width: 400px;
+    }
+
+    a {
+        font-size: 20px;
+    }
+    h1 {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    h3 {
+        font-size: 15px;
+    }
+    .input-field {
+        width: 300px;
+    }
+}
+
+@media screen and (min-width: 501px) and (max-width: 650px) {
+    .input-field {
+        width: 500px;
+    }
+}

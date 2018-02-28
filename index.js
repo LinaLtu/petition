@@ -70,7 +70,6 @@ app.use(express.static(__dirname + "/public"));
 app.use(
     cookieSession({
         secret: process.env.SESSION_SECRET || "a really hard to guess secret",
-        //put it in secrets json file
 
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
