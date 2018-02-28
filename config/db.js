@@ -2,7 +2,10 @@ var spicedPg = require("spiced-pg");
 
 var { dbUser, dbPass } = require("../secrets.json");
 
-var db = spicedPg(`postgres:${dbUser}:${dbPass}@localhost:5432/signatures`);
+var db = spicedPg(
+    process.env.DATABASE_URL ||
+        `postgres:${dbUser}:${dbPass}@localhost:5432/signatures`
+);
 
 function insertSignatures(signature, user_id) {
     const q = `INSERT INTO signatures (signature, user_id) VALUES ($1, $2) RETURNING id`;
@@ -216,6 +219,14 @@ function checkIfUserProfileRowExists(userId) {
     });
 }
 
+function deleteSignature(user_id) {
+    const q = `DELETE FROM signatures
+    WHERE user_id = $1;`;
+    const params = [user_id];
+
+    return db.query(q, params);
+}
+
 module.exports.insertSignatures = insertSignatures;
 module.exports.getSignature = getSignature;
 module.exports.getSignedNames = getSignedNames;
@@ -232,3 +243,4 @@ module.exports.insertIntoUserProfileInfo = insertIntoUserProfileInfo;
 module.exports.checkIfUserProfileRowExists = checkIfUserProfileRowExists;
 module.exports.updateUsersTable = updateUsersTable;
 module.exports.updateProfileInfoUsers = updateProfileInfoUsers;
+module.exports.deleteSignature = deleteSignature;

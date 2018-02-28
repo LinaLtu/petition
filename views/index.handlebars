@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>CSURF Prevention Exercise</title>
+    </head>
+    <body>
+
+        <form method = "post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
+            <!-- this value should be seen in the DEV tools, under "value" -->
+            <input type="text" name="info" placeholdee="Enter Info">
+            <button type="submit" name="button">Send Info</buttom>
+
+    </body>
+</html>

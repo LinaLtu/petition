@@ -5,6 +5,8 @@ const hb = require("express-handlebars");
 const cookieSession = require("cookie-session");
 const db = require("./config/db.js");
 const bcrypt = require("bcryptjs");
+const csrf = require("csurf");
+
 const insertSignatures = db.insertSignatures;
 const getSignature = db.getSignature;
 const getSignedNames = db.getSignedNames;
@@ -21,6 +23,7 @@ const insertIntoUserProfileInfo = db.insertIntoUserProfileInfo;
 const checkIfUserProfileRowExists = db.checkIfUserProfileRowExists;
 const updateUsersTable = db.updateUsersTable;
 const updateProfileInfoUsers = db.updateProfileInfoUsers;
+const deleteSignature = db.deleteSignature;
 
 var id;
 var userId;
@@ -66,12 +69,14 @@ app.use(express.static(__dirname + "/public"));
 
 app.use(
     cookieSession({
-        secret: "a really hard to guess secret",
+        secret: process.env.SESSION_SECRET || "a really hard to guess secret",
         //put it in secrets json file
 
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
 );
+
+var csrfProtection = csrf();
 
 app.get("/", (req, res) => {
     if (!req.session.signatureId) {
@@ -108,6 +113,7 @@ app.post("/", (req, res) => {
 ///ADD countSignatures TO THE THANK YOU PAGE!
 
 app.get("/thankyou", (req, res) => {
+    console.log(req.session);
     if (req.session.signatureId && req.session.userId) {
         //console.log(req.session.signatureId);
         getSignature(req.session.signatureId).then(idResults => {
@@ -119,7 +125,7 @@ app.get("/thankyou", (req, res) => {
     }
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", csrfProtection, (req, res) => {
     if (
         req.body.first &&
         req.body.last &&
@@ -157,17 +163,18 @@ app.post("/register", (req, res) => {
     }
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", csrfProtection, (req, res) => {
     if (req.session.userId) {
         res.redirect("/");
     } else {
         res.render("login", {
-            layout: "main"
+            layout: "main",
+            csrfToken: req.csrfToken()
         });
     }
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", csrfProtection, (req, res) => {
     if (req.body.email && req.body.password) {
         getUserInfo(req.body.email)
             .then(hashedPassword =>
@@ -239,32 +246,35 @@ app.get("/petition/signers/:city", (req, res) => {
     });
 });
 
-app.get("/register", (req, res) => {
+app.get("/register", csrfProtection, (req, res) => {
     if (req.session.userId) {
         res.redirect("/profile");
     } else {
         res.render("register", {
-            layout: "main"
+            layout: "main",
+            csrfToken: req.csrfToken()
         });
     }
 });
 
-app.get("/profile", (req, res) => {
+app.get("/profile", csrfProtection, (req, res) => {
     res.render("profile", {
-        layout: "main"
+        layout: "main",
+        csrfToken: req.csrfToken()
     });
 });
 
-app.get("/profile/edit", (req, res) => {
+app.get("/profile/edit", csrfProtection, (req, res) => {
     populateEditFields(req.session.userId).then(infoForEdit => {
         res.render("edit", {
             layout: "main",
-            infoForEdit: infoForEdit.rows[0]
+            infoForEdit: infoForEdit.rows[0],
+            csrfToken: req.csrfToken()
         });
     });
 });
 
-app.post("/profile/edit", (req, res) => {
+app.post("/profile/edit", csrfProtection, (req, res) => {
     //we run an update on two tables
     //one of the conditions: if a user doesn't have a row for optional info, (SELECT and then: if they don't have a row => INSERT, if they do -> UPDATE)
     //or add a row as soon as an user is created
@@ -278,33 +288,34 @@ app.post("/profile/edit", (req, res) => {
             if (!doesExist) {
                 console.log("Row does not exist");
                 insertIntoProfileInfoUsers(userId, age, city, url);
+                res.redirect("/thankyou");
             } else {
                 console.log("Row does exist");
                 updateProfileInfoUsers(age, city, url, userId);
+                console.log("Data inserted: ", age, city, url, userId);
+                res.redirect("/thankyou");
             }
         });
     }
 
     if (password) {
-        hashPassword(password)
-            .then(hash => {
-                updatePassword(hash).then(() => {
-                    updateUsersTable(first, last, email, userId).then(() => {
-                        checkAndInsterUserProfiles();
-                    });
+        hashPassword(password).then(hash => {
+            updatePassword(hash).then(() => {
+                updateUsersTable(first, last, email, userId).then(() => {
+                    checkAndInsterUserProfiles().then(() =>
+                        res.redirect("/thankyou")
+                    );
                 });
-            })
-            .then(() => res.redirect("/thankyou"));
+            });
+        });
     } else {
-        updateUsersTable(first, last, email, userId)
-            .then(() => {
-                checkAndInsterUserProfiles();
-            })
-            .then(() => res.redirect("/thankyou"));
+        updateUsersTable(first, last, email, userId).then(() => {
+            checkAndInsterUserProfiles().then(() => res.redirect("/thankyou"));
+        });
     }
 });
 
-app.post("/profile", (req, res) => {
+app.post("/profile", csrfProtection, (req, res) => {
     insertProfileInfo(
         req.body.age,
         req.body.city,
@@ -321,6 +332,21 @@ app.post("/profile", (req, res) => {
         });
 });
 
-app.listen(8080, () => {
+app.get("/profile/delete", (req, res) => {
+    console.log("We are deleting");
+    deleteSignature(req.session.userId)
+        .then(() => delete req.session.signatureId)
+        .then(() => (req.session.funky = "chicken"))
+        .then(() => console.log(req.session))
+        .then(() => res.redirect("/"))
+        .catch(err => {
+            console.log("Something went wrong", err);
+            res.render("profile", {
+                layout: "thankyou"
+            });
+        });
+});
+
+app.listen(process.env.PORT || 8080, function() {
     console.log("Listening Petition");
 });
