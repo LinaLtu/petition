@@ -163,7 +163,7 @@ function updateUsersTable(first, last, email, userId) {
 
 function updateProfileInfoUsers(age, city, url, userId) {
     const q = `UPDATE user_profiles SET age = $1, city = $2, url = $3
-    WHERE id = $4`;
+    WHERE user_id = $4`;
 
     const params = [age || null, city || null, url || null, userId];
 
@@ -209,6 +209,7 @@ function checkIfUserProfileRowExists(userId) {
     const params = [userId];
 
     return db.query(q, params).then(results => {
+        console.log("From check function: ", results.rows);
         if (results.rows.length === 0) {
             return false;
             // row isn't there...do an INSERT, Lina!

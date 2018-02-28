@@ -79,7 +79,9 @@ app.use(
 var csrfProtection = csrf();
 
 app.get("/", (req, res) => {
-    if (!req.session.signatureId) {
+    if (!req.session.userId && !req.session.signatureId) {
+        res.redirect("/register");
+    } else if (!req.session.signatureId) {
         res.render("welcome", {
             layout: "main"
         });
@@ -285,15 +287,16 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
 
     function checkAndInsterUserProfiles() {
         checkIfUserProfileRowExists(userId).then(doesExist => {
+            console.log("Does exist ", doesExist);
             if (!doesExist) {
-                console.log("Row does not exist");
+                // console.log("Row does not exist");
                 insertIntoProfileInfoUsers(userId, age, city, url);
-                res.redirect("/thankyou");
+                res.redirect("/");
             } else {
-                console.log("Row does exist");
+                console.log("Req.body inside of checkUserInfo ", req.body);
                 updateProfileInfoUsers(age, city, url, userId);
                 console.log("Data inserted: ", age, city, url, userId);
-                res.redirect("/thankyou");
+                res.redirect("/");
             }
         });
     }
@@ -302,15 +305,13 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
         hashPassword(password).then(hash => {
             updatePassword(hash).then(() => {
                 updateUsersTable(first, last, email, userId).then(() => {
-                    checkAndInsterUserProfiles().then(() =>
-                        res.redirect("/thankyou")
-                    );
+                    checkAndInsterUserProfiles().then(() => res.redirect("/"));
                 });
             });
         });
     } else {
         updateUsersTable(first, last, email, userId).then(() => {
-            checkAndInsterUserProfiles().then(() => res.redirect("/thankyou"));
+            checkAndInsterUserProfiles().then(() => res.redirect("/"));
         });
     }
 });
