@@ -60,6 +60,14 @@ function checkPassword(textEnteredInLoginForm, hashedPasswordFromDatabase) {
     });
 }
 
+//add csurf to every route with a form
+// app.use(csurf());
+//
+// app.use(function(req, res, next) {
+//     res.locals.csrfToken = req.csrfToken();
+//     next();
+// });
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.engine("handlebars", hb());
