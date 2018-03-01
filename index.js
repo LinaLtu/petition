@@ -267,10 +267,34 @@ app.get("/register", csrfProtection, (req, res) => {
 });
 
 app.get("/profile", csrfProtection, (req, res) => {
-    res.render("profile", {
-        layout: "main",
-        csrfToken: req.csrfToken()
-    });
+    if (req.session.profile) {
+        res.redirect("/");
+    } else {
+        res.render("profile", {
+            layout: "main",
+            csrfToken: req.csrfToken()
+        });
+    }
+});
+
+app.post("/profile", csrfProtection, (req, res) => {
+    insertProfileInfo(
+        req.body.age,
+        req.body.city,
+        req.body.url,
+        req.session.userId
+    )
+        .then(() => {
+            req.session.profile = true;
+            res.redirect("/");
+        })
+        .catch(err => {
+            console.log("Something went wrong", err);
+            res.render("profile", {
+                layout: "main",
+                error: true
+            });
+        });
 });
 
 app.get("/profile/edit", csrfProtection, (req, res) => {
@@ -329,23 +353,6 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
             checkAndInsterUserProfiles().then(() => res.redirect("/"));
         });
     }
-});
-
-app.post("/profile", csrfProtection, (req, res) => {
-    insertProfileInfo(
-        req.body.age,
-        req.body.city,
-        req.body.url,
-        req.session.userId
-    )
-        .then(res.redirect("/"))
-        .catch(err => {
-            console.log("Something went wrong", err);
-            res.render("profile", {
-                layout: "main",
-                error: true
-            });
-        });
 });
 
 app.get("/profile/delete", (req, res) => {
