@@ -10,8 +10,8 @@ canvas.on("mousedown", function(e) {
     ctx.beginPath();
 
     canvas.on("mousemove", function(e) {
-        offsetX = e.touches[0].offsetX;
-        offsetY = e.touches[0].offsetY;
+        offsetX = e.offsetX;
+        offsetY = e.offsetY;
         ctx.lineTo(offsetX, offsetY);
         ctx.stroke();
     });
@@ -26,16 +26,25 @@ canvas.on("mouseup", function() {
 
 //Touchscreen
 
-canvas.on("touchdown", function(e) {
+var canvasOffset = canvas.offset();
+
+canvas.on("touchstart", function(e) {
+    // console.log(e.touches[0]);
+    offsetX = e.touches[0].pageX - canvasOffset.left;
+    offsetY = e.touches[0].pageY - canvasOffset.top;
     ctx.strokeStyle = "black";
     ctx.beginPath();
+    e.preventDefault();
+});
 
-    canvas.on("touchmove", function(e) {
-        offsetX = e.touches[0].offsetX;
-        offsetY = e.touches[0].offsetY;
-        ctx.lineTo(offsetX, offsetY);
-        ctx.stroke();
-    });
+canvas.on("touchmove", function(e) {
+    offsetX = e.touches[0].pageX - canvasOffset.left;
+    offsetY = e.touches[0].pageY - canvasOffset.top;
+    ctx.lineTo(offsetX, offsetY);
+    ctx.stroke();
+    e.preventDefault();
+
+    $('input[name="signature"]').val(canvas[0].toDataURL());
 });
 
 // canvas.on("touchup", function() {
