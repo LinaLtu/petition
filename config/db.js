@@ -103,7 +103,7 @@ function getSignedInfo() {
 function getSignedInfoByCity(city) {
     const q = `SELECT users.first, users.last, user_profiles.age, user_profiles.city, user_profiles.url FROM users
     JOIN user_profiles
-    ON users.id = user_id
+    ON users.id = user_profiles.user_id
     WHERE city = $1`;
 
     const param = [city];
