@@ -14,7 +14,7 @@ body {
 /* Petition Page  */
 
 .main {
-    width: 800px;
+    width: 70%;
     background-color: #f1a039;
     padding: 10px 40px 10px 40px;
 }
@@ -75,12 +75,16 @@ h3 {
 
 .picture-thanks,
 .picture-thanks-sign {
-    margin: 10px;
+    margin: 2%;
     text-align: center;
 }
 
 .picture-thanks-sign {
     border: 1px solid grey;
+}
+.canvas-image {
+    width: 400px;
+    height: 100px;
 }
 
 #canvas {
@@ -109,15 +113,11 @@ h3 {
 }
 
 .input-field {
-    width: 600px;
+    width: 65%;
     padding: 10px;
 }
 
 @media screen and (max-width: 500px) {
-    #ananas {
-        width: 400px;
-    }
-
     a {
         font-size: 20px;
     }
@@ -129,13 +129,30 @@ h3 {
     h3 {
         font-size: 15px;
     }
-    .input-field {
-        width: 300px;
+
+    .middle-content {
+        width: 80%;
+    }
+
+    .canvas-image {
+        width: 90%;
+    }
+    #ananas {
+        width: 100%;
+    }
+
+    #canvas {
+    }
+}
+
+@media screen and (min-width: 500px) and (max-width: 880px) {
+    #ananas {
+        width: 90%;
     }
 }
 
 @media screen and (min-width: 501px) and (max-width: 650px) {
-    .input-field {
-        width: 500px;
+    .middle-content {
+        width: 80%;
     }
 }

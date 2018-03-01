@@ -20,7 +20,6 @@ canvas.on("mousedown", function(e) {
 canvas.on("mouseup", function() {
     canvas.unbind("mousemove");
     var c = document.getElementById("canvas");
-    c.toDataURL();
     $('input[name="signature"]').val(c.toDataURL());
 });
 
@@ -29,7 +28,6 @@ canvas.on("mouseup", function() {
 var canvasOffset = canvas.offset();
 
 canvas.on("touchstart", function(e) {
-    // console.log(e.touches[0]);
     offsetX = e.touches[0].pageX - canvasOffset.left;
     offsetY = e.touches[0].pageY - canvasOffset.top;
     ctx.strokeStyle = "black";
@@ -46,6 +44,10 @@ canvas.on("touchmove", function(e) {
 
     $('input[name="signature"]').val(canvas[0].toDataURL());
 });
+
+if (matchMedia("(max-width: 500px)".matches)) {
+    canvas[0].width = 250;
+}
 
 // canvas.on("touchup", function() {
 //     canvas.unbind("mousemove");
