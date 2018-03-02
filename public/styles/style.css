@@ -36,7 +36,7 @@ h1,
 h2,
 h3 {
     text-align: center;
-    padding: 30px;
+    padding-top: 30px;
     margin: 0;
 }
 
@@ -122,26 +122,33 @@ h3 {
         font-size: 20px;
     }
     h1 {
-        font-size: 20px;
+        font-size: 25px;
         font-weight: bold;
+        text-align: center;
+        width: 100%;
     }
 
-    h3 {
-        font-size: 15px;
+    h3,
+    h2 {
+        font-size: 20px;
+        text-align: center;
+        width: 100%;
     }
 
     .middle-content {
-        width: 80%;
+        width: 100%;
     }
 
     .canvas-image {
-        width: 90%;
+        width: 100%;
+        margin: 10px auto;
     }
     #ananas {
         width: 100%;
     }
 
     #canvas {
+        margin: 20px auto;
     }
 }
 
@@ -149,10 +156,18 @@ h3 {
     #ananas {
         width: 90%;
     }
+
+    .middle-content {
+        width: 100%;
+    }
+
+    .picture {
+        width: 100%;
+    }
 }
 
-@media screen and (min-width: 501px) and (max-width: 650px) {
+/* @media screen and (min-width: 501px) and (max-width: 650px) {
     .middle-content {
         width: 80%;
     }
-}
+} */
