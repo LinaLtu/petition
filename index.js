@@ -24,6 +24,7 @@ const checkIfUserProfileRowExists = db.checkIfUserProfileRowExists;
 const updateUsersTable = db.updateUsersTable;
 const updateProfileInfoUsers = db.updateProfileInfoUsers;
 const deleteSignature = db.deleteSignature;
+const checkIfSigned = db.checkIfSigned;
 
 var id;
 var userId;
@@ -122,15 +123,19 @@ app.post("/", (req, res) => {
 ///ADD countSignatures TO THE THANK YOU PAGE!
 
 app.get("/thankyou", (req, res) => {
-    console.log(req.session);
+    // console.log(req.session);
     if (req.session.signatureId && req.session.userId) {
         //console.log(req.session.signatureId);
-        getSignature(req.session.signatureId).then(idResults => {
-            res.render("thankyou", {
-                layout: "main",
-                signature: idResults.rows[0].signature
-            });
-        });
+        getSignature(req.session.userId)
+            .then(idResults => {
+                res.render("thankyou", {
+                    layout: "main",
+                    signature: idResults.rows[0].signature
+                });
+            })
+            .catch(() => res.redirect("/"));
+    } else {
+        res.redirect("/");
     }
 });
 
@@ -197,8 +202,15 @@ app.post("/login", csrfProtection, (req, res) => {
                         let last = hashedPassword.rows[0].last;
 
                         req.session.userId = userId;
-                        res.render("welcome", {
-                            layout: "main"
+                        checkIfSigned(req.session.userId).then(results => {
+                            if (results.rows[0]) {
+                                console.log(results.rows[0]);
+                                req.session.signatureId = results.rows[0].id;
+
+                                res.redirect("/thankyou");
+                            } else {
+                                res.redirect("/");
+                            }
                         });
                     } else {
                         res.render("login", {
@@ -206,7 +218,6 @@ app.post("/login", csrfProtection, (req, res) => {
                             error: true
                         });
                     }
-                    //check if it correct, set the session and redirect, otherwise render an error
                 })
             )
             .catch(err => {
@@ -356,18 +367,23 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
 });
 
 app.get("/profile/delete", (req, res) => {
-    console.log("We are deleting");
+    console.log(req.session);
     deleteSignature(req.session.userId)
         .then(() => delete req.session.signatureId)
-        .then(() => (req.session.funky = "chicken"))
-        .then(() => console.log(req.session))
+        // .then(() => console.log("We have deleted", req.body.signature))
         .then(() => res.redirect("/"))
         .catch(err => {
             console.log("Something went wrong", err);
-            res.render("profile", {
-                layout: "thankyou"
+            res.render("thankyou", {
+                layout: "main"
             });
         });
+});
+
+app.get("/logout", (req, res) => {
+    console.log("You've logged out");
+    req.session = null;
+    res.redirect("/login");
 });
 
 app.listen(process.env.PORT || 8080, function() {

@@ -20,9 +20,9 @@ function insertSignatures(signature, user_id) {
         .catch(err => console.log(err));
 }
 
-function getSignature(signatureId) {
-    const q = `SELECT signature FROM signatures WHERE id = $1`;
-    const param = [signatureId];
+function getSignature(userId) {
+    const q = `SELECT signature FROM signatures WHERE user_id = $1`;
+    const param = [userId];
 
     return db
         .query(q, param)
@@ -221,11 +221,24 @@ function checkIfUserProfileRowExists(userId) {
 }
 
 function deleteSignature(user_id) {
+    console.log(user_id);
     const q = `DELETE FROM signatures
     WHERE user_id = $1;`;
     const params = [user_id];
 
     return db.query(q, params);
+}
+
+function checkIfSigned(userId) {
+    const q = `SELECT * FROM signatures WHERE user_id = $1`;
+    const param = [userId];
+
+    return db
+        .query(q, param)
+        .then(results => {
+            return results;
+        })
+        .catch(err => console.log(err));
 }
 
 module.exports.insertSignatures = insertSignatures;
@@ -245,3 +258,4 @@ module.exports.checkIfUserProfileRowExists = checkIfUserProfileRowExists;
 module.exports.updateUsersTable = updateUsersTable;
 module.exports.updateProfileInfoUsers = updateProfileInfoUsers;
 module.exports.deleteSignature = deleteSignature;
+module.exports.checkIfSigned = checkIfSigned;
