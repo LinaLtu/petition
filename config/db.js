@@ -1,4 +1,5 @@
 var spicedPg = require("spiced-pg");
+const config = require("./config");
 
 var { dbUser, dbPass } = require("../secrets.json");
 

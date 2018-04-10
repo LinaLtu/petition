@@ -1,11 +1,11 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const bodyParser = require("body-parser");
-const hb = require("express-handlebars");
-const cookieSession = require("cookie-session");
-const db = require("./config/db.js");
-const bcrypt = require("bcryptjs");
-const csrf = require("csurf");
+const bodyParser = require('body-parser');
+const hb = require('express-handlebars');
+const cookieSession = require('cookie-session');
+const db = require('./config/db.js');
+const bcrypt = require('bcryptjs');
+const csrf = require('csurf');
 
 const insertSignatures = db.insertSignatures;
 const getSignature = db.getSignature;
@@ -71,14 +71,14 @@ function checkPassword(textEnteredInLoginForm, hashedPasswordFromDatabase) {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.engine("handlebars", hb());
-app.set("view engine", "handlebars");
+app.engine('handlebars', hb());
+app.set('view engine', 'handlebars');
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + '/public'));
 
 app.use(
     cookieSession({
-        secret: process.env.SESSION_SECRET || "a really hard to guess secret",
+        secret: process.env.SESSION_SECRET || 'a really hard to guess secret',
 
         maxAge: 1000 * 60 * 60 * 24 * 14
     })
@@ -86,35 +86,35 @@ app.use(
 
 var csrfProtection = csrf();
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
     if (!req.session.userId && !req.session.signatureId) {
-        res.redirect("/register");
+        res.redirect('/register');
     } else if (!req.session.signatureId) {
-        res.render("welcome", {
-            layout: "main"
+        res.render('welcome', {
+            layout: 'main'
         });
     } else {
-        res.redirect("/thankyou");
+        res.redirect('/thankyou');
     }
 });
 
-app.post("/", (req, res) => {
+app.post('/', (req, res) => {
     console.log(req.session.userId);
     if (req.body.signature) {
         insertSignatures(req.body.signature, req.session.userId)
             .then(results => {
                 req.session.signatureId = results.rows[0].id;
-                res.redirect("/thankyou");
+                res.redirect('/thankyou');
             })
             .catch(() => {
-                res.render("welcome", {
-                    layout: "main",
+                res.render('welcome', {
+                    layout: 'main',
                     error: true
                 });
             });
     } else {
-        res.render("welcome", {
-            layout: "main",
+        res.render('welcome', {
+            layout: 'main',
             error: true
         });
     }
@@ -122,24 +122,24 @@ app.post("/", (req, res) => {
 
 ///ADD countSignatures TO THE THANK YOU PAGE!
 
-app.get("/thankyou", (req, res) => {
+app.get('/thankyou', (req, res) => {
     // console.log(req.session);
     if (req.session.signatureId && req.session.userId) {
         //console.log(req.session.signatureId);
         getSignature(req.session.userId)
             .then(idResults => {
-                res.render("thankyou", {
-                    layout: "main",
+                res.render('thankyou', {
+                    layout: 'main',
                     signature: idResults.rows[0].signature
                 });
             })
-            .catch(() => res.redirect("/"));
+            .catch(() => res.redirect('/'));
     } else {
-        res.redirect("/");
+        res.redirect('/');
     }
 });
 
-app.post("/register", csrfProtection, (req, res) => {
+app.post('/register', csrfProtection, (req, res) => {
     if (
         req.body.first &&
         req.body.last &&
@@ -160,35 +160,35 @@ app.post("/register", csrfProtection, (req, res) => {
                     //     "This is your id: " + insertRegistrationInfo.rows[0].id
                     // );
                     // console.log("You've registered");
-                    res.redirect("/profile");
+                    res.redirect('/profile');
                 })
             )
             .catch(() => {
-                res.render("register", {
-                    layout: "main",
+                res.render('register', {
+                    layout: 'main',
                     error: true
                 });
             });
     } else {
-        res.render("register", {
-            layout: "main",
+        res.render('register', {
+            layout: 'main',
             error: true
         });
     }
 });
 
-app.get("/login", csrfProtection, (req, res) => {
+app.get('/login', csrfProtection, (req, res) => {
     if (req.session.userId) {
-        res.redirect("/");
+        res.redirect('/');
     } else {
-        res.render("login", {
-            layout: "main",
+        res.render('login', {
+            layout: 'main',
             csrfToken: req.csrfToken()
         });
     }
 });
 
-app.post("/login", csrfProtection, (req, res) => {
+app.post('/login', csrfProtection, (req, res) => {
     if (req.body.email && req.body.password) {
         getUserInfo(req.body.email)
             .then(hashedPassword =>
@@ -207,88 +207,87 @@ app.post("/login", csrfProtection, (req, res) => {
                                 console.log(results.rows[0]);
                                 req.session.signatureId = results.rows[0].id;
 
-                                res.redirect("/thankyou");
+                                res.redirect('/thankyou');
                             } else {
-                                res.redirect("/");
+                                res.redirect('/');
                             }
                         });
                     } else {
-                        res.render("login", {
-                            layout: "main",
+                        res.render('login', {
+                            layout: 'main',
                             error: true
                         });
                     }
                 })
             )
             .catch(err => {
-                console.log("We are here 2", err);
-                res.render("login", {
+                console.log('We are here 2', err);
+                res.render('login', {
                     error: true
                 });
             });
     } else {
-        console.log("We are here 3");
-        res.render("login", {
-            layout: "main",
+        res.render('login', {
+            layout: 'main',
             error: true
         });
     }
 });
 
-app.get("/signed", (req, res) => {
+app.get('/signed', (req, res) => {
     getSignedNames().then(signedNames => {
         console.log(signedNames);
-        res.render("signed", {
-            layout: "main",
+        res.render('signed', {
+            layout: 'main',
             signedNames: signedNames.rows
         });
     });
 });
 
-app.get("/petition/signers", (req, res) => {
+app.get('/petition/signers', (req, res) => {
     getSignedInfo().then(signedInfo => {
         console.log(signedInfo);
-        res.render("petition/signers", {
-            layout: "main",
+        res.render('petition/signers', {
+            layout: 'main',
             signedInfo: signedInfo.rows,
             cityPage: true
         });
     });
 });
 
-app.get("/petition/signers/:city", (req, res) => {
+app.get('/petition/signers/:city', (req, res) => {
     getSignedInfoByCity(req.params.city).then(signedInfoByCity => {
-        res.render("petition/signers", {
-            layout: "main",
+        res.render('petition/signers', {
+            layout: 'main',
             signedInfo: signedInfoByCity.rows,
             cityPage: false
         });
     });
 });
 
-app.get("/register", csrfProtection, (req, res) => {
+app.get('/register', csrfProtection, (req, res) => {
     if (req.session.userId) {
-        res.redirect("/profile");
+        res.redirect('/profile');
     } else {
-        res.render("register", {
-            layout: "main",
+        res.render('register', {
+            layout: 'main',
             csrfToken: req.csrfToken()
         });
     }
 });
 
-app.get("/profile", csrfProtection, (req, res) => {
+app.get('/profile', csrfProtection, (req, res) => {
     if (req.session.profile) {
-        res.redirect("/");
+        res.redirect('/');
     } else {
-        res.render("profile", {
-            layout: "main",
+        res.render('profile', {
+            layout: 'main',
             csrfToken: req.csrfToken()
         });
     }
 });
 
-app.post("/profile", csrfProtection, (req, res) => {
+app.post('/profile', csrfProtection, (req, res) => {
     insertProfileInfo(
         req.body.age,
         req.body.city,
@@ -297,28 +296,28 @@ app.post("/profile", csrfProtection, (req, res) => {
     )
         .then(() => {
             req.session.profile = true;
-            res.redirect("/");
+            res.redirect('/');
         })
         .catch(err => {
-            console.log("Something went wrong", err);
-            res.render("profile", {
-                layout: "main",
+            console.log('Something went wrong', err);
+            res.render('profile', {
+                layout: 'main',
                 error: true
             });
         });
 });
 
-app.get("/profile/edit", csrfProtection, (req, res) => {
+app.get('/profile/edit', csrfProtection, (req, res) => {
     populateEditFields(req.session.userId).then(infoForEdit => {
-        res.render("edit", {
-            layout: "main",
+        res.render('edit', {
+            layout: 'main',
             infoForEdit: infoForEdit.rows[0],
             csrfToken: req.csrfToken()
         });
     });
 });
 
-app.post("/profile/edit", csrfProtection, (req, res) => {
+app.post('/profile/edit', csrfProtection, (req, res) => {
     //we run an update on two tables
     //one of the conditions: if a user doesn't have a row for optional info, (SELECT and then: if they don't have a row => INSERT, if they do -> UPDATE)
     //or add a row as soon as an user is created
@@ -329,23 +328,23 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
 
     function checkAndInsterUserProfiles() {
         checkIfUserProfileRowExists(userId).then(doesExist => {
-            console.log("Does exist ", doesExist);
+            console.log('Does exist ', doesExist);
             if (!doesExist) {
                 // console.log("Row does not exist");
                 if (isNaN(age)) {
-                    res.redirect("/profile/edit");
+                    res.redirect('/profile/edit');
                 } else {
                     insertIntoProfileInfoUsers(userId, age, city, url);
-                    res.redirect("/");
+                    res.redirect('/');
                 }
             } else {
-                console.log("Req.body inside of checkUserInfo ", req.body);
+                console.log('Req.body inside of checkUserInfo ', req.body);
                 if (isNaN(age)) {
-                    res.redirect("/profile/edit");
+                    res.redirect('/profile/edit');
                 } else {
                     updateProfileInfoUsers(age, city, url, userId);
-                    console.log("Data inserted: ", age, city, url, userId);
-                    res.redirect("/");
+                    console.log('Data inserted: ', age, city, url, userId);
+                    res.redirect('/');
                 }
             }
         });
@@ -355,37 +354,37 @@ app.post("/profile/edit", csrfProtection, (req, res) => {
         hashPassword(password).then(hash => {
             updatePassword(hash).then(() => {
                 updateUsersTable(first, last, email, userId).then(() => {
-                    checkAndInsterUserProfiles().then(() => res.redirect("/"));
+                    checkAndInsterUserProfiles().then(() => res.redirect('/'));
                 });
             });
         });
     } else {
         updateUsersTable(first, last, email, userId).then(() => {
-            checkAndInsterUserProfiles().then(() => res.redirect("/"));
+            checkAndInsterUserProfiles().then(() => res.redirect('/'));
         });
     }
 });
 
-app.get("/profile/delete", (req, res) => {
+app.get('/profile/delete', (req, res) => {
     console.log(req.session);
     deleteSignature(req.session.userId)
         .then(() => delete req.session.signatureId)
         // .then(() => console.log("We have deleted", req.body.signature))
-        .then(() => res.redirect("/"))
+        .then(() => res.redirect('/'))
         .catch(err => {
-            console.log("Something went wrong", err);
-            res.render("thankyou", {
-                layout: "main"
+            console.log('Something went wrong', err);
+            res.render('thankyou', {
+                layout: 'main'
             });
         });
 });
 
-app.get("/logout", (req, res) => {
+app.get('/logout', (req, res) => {
     console.log("You've logged out");
     req.session = null;
-    res.redirect("/login");
+    res.redirect('/login');
 });
 
 app.listen(process.env.PORT || 8080, function() {
-    console.log("Listening Petition");
+    console.log('Listening Petition');
 });
