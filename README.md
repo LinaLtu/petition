@@ -4,7 +4,7 @@ On the 6th week of Full Stack JavaScript Web Development coding bootcamp at SPIC
 
 [Petition on Heroku](https://pineapplepetition.herokuapp.com/)
 
-![petitiondemo](/Users/lina/Desktop/horseradish-petition/petitiondemo.gif)
+![petitiondemo](https://github.com/spicedacademy/horseradish-petition/blob/lina/petitiondemo.gif)
 
 ### Users can:
 
