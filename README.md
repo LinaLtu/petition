@@ -8,17 +8,17 @@ On the 6th week of Full Stack JavaScript Web Development coding bootcamp at SPIC
 
 ### Users can:
 
-- register and log in (passwords are hashed and salted),
-- edit their profile,
-- sign the petition and delete their signature,
--  see other users who have signed the petition.  
+* register and log in (passwords are hashed and salted),
+* edit their profile,
+* sign the petition and delete their signature,
+* see other users who have signed the petition.
 
 ### Technologies used:
 
-- Node.js and Express.js
-- Express Handlebars
-- PostgreSQL Database
-- Redis 
-- Canvas
+* Node.js and Express.js
+* Express Handlebars
+* PostgreSQL Database
+* Redis
+* Canvas
 
-While working on the project, I became more comfortable with Express.js and Express Handlebar. I also had an opportunity to practice making a responsive design and figure out how to make it possible to sign the petition on a touch screen. 
+While working on the project, I became more comfortable with Express.js and Express Handlebar. I also had an opportunity to practice making a responsive design and figure out how to make it possible to sign the petition on a touch screen.

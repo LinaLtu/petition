@@ -1,9 +1,7 @@
 body {
-    font-family: "Amatic SC", cursive;
-    /* background-color: #ffeecc; */
-    /* #7ed4d1; */
+    font-family: 'Amatic SC', cursive;
     background-attachment: fixed;
-    background-image: url("/background-img.jpg");
+    background-image: url('/background-img.jpg');
     background-repeat: no-repeat;
     margin: 0;
     padding: 0;
@@ -22,12 +20,9 @@ body {
 .middle-content {
     width: 100%;
     height: auto;
-    /* background-color: white; */
-    /* padding: 10px 40px 10px 40px; */
     margin-right: 100px;
 }
 .form {
-    /* ??? */
     text-align: center;
     margin: 10px;
 }
@@ -70,7 +65,6 @@ h3 {
     text-align: center;
     margin: 20px;
     opacity: 0.8;
-    /* border: 1px solid black; */
 }
 
 .picture-thanks,
@@ -170,9 +164,3 @@ h3 {
         width: 100%;
     }
 }
-
-/* @media screen and (min-width: 501px) and (max-width: 650px) {
-    .middle-content {
-        width: 80%;
-    }
-} */

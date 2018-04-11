@@ -1,7 +1,7 @@
-var spicedPg = require("spiced-pg");
-const config = require("./config");
+var spicedPg = require('spiced-pg');
+const config = require('./config');
 
-var { dbUser, dbPass } = require("../secrets.json");
+var { dbUser, dbPass } = require('../secrets.json');
 
 var db = spicedPg(
     process.env.DATABASE_URL ||
@@ -15,7 +15,6 @@ function insertSignatures(signature, user_id) {
     return db
         .query(q, params)
         .then(results => {
-            console.log("Insert new signature was successful");
             return results;
         })
         .catch(err => console.log(err));
@@ -62,7 +61,6 @@ function insertRegistrationInfo(first, last, email, password) {
     return db
         .query(q, params)
         .then(registrationResults => {
-            console.log("Insert new signature was successful");
             return registrationResults;
         })
         .catch(err => console.log(err));
@@ -77,12 +75,10 @@ function getUserInfo(email) {
 function insertProfileInfo(age, city, url, user_id) {
     const q = `INSERT INTO user_profiles (age, city, url, user_id) VALUES ($1, $2, $3, $4)`;
     const params = [age, city, url, user_id];
-    console.log(params);
 
     return db
         .query(q, params)
         .then(profileInfo => {
-            console.log("You profile has been updated");
             return profileInfo;
         })
         .catch(err => console.log(err));
@@ -136,12 +132,10 @@ function populateEditFields(user_id) {
 function insertIntoProfileInfoUsers(userId, age, city, url) {
     const q = `INSERT INTO user_profiles (user_id, age, city, url) VALUES ($1, $2, $3, $4)`;
     const params = [userId, age || null, city || null, url || null];
-    console.log(params);
 
     return db
         .query(q, params)
         .then(updatedProfileInfo => {
-            console.log("Your profile has been updated");
             return updatedProfileInfo;
         })
         .catch(err => console.log(err));
@@ -156,7 +150,6 @@ function updateUsersTable(first, last, email, userId) {
     return db
         .query(q, params)
         .then(updatedProfileInfo => {
-            console.log("Your profile has been updated");
             return updatedProfileInfo;
         })
         .catch(err => console.log(err));
@@ -171,7 +164,6 @@ function updateProfileInfoUsers(age, city, url, userId) {
     return db
         .query(q, params)
         .then(updatedProfileInfo => {
-            console.log("Your profile has been updated");
             return updatedProfileInfo;
         })
         .catch(err => console.log(err));
@@ -180,12 +172,10 @@ function updateProfileInfoUsers(age, city, url, userId) {
 function insertIntoUserProfileInfo(age, city, url) {
     const q = `INSERT INTO user_profiles (age, city, url) VALUES ($1, $2, $3)`;
     const params = [age || null, city || null, url || null];
-    console.log(params);
 
     return db
         .query(q, params)
         .then(updatedUserProfileInfo => {
-            // console.log("Your profile has been updated");
             return updatedUserProfileInfo;
         })
         .catch(err => console.log(err));
@@ -194,35 +184,29 @@ function insertIntoUserProfileInfo(age, city, url) {
 function updatePassword(password) {
     const q = `INSERT INTO users (password) VALUES ($1)`;
     const params = [password];
-    console.log(params);
 
     return db
         .query(q, params)
         .then(updatedPassword => {
-            console.log("Your password has been updated");
             return updatedPassword;
         })
         .catch(err => console.log(err));
 }
 
 function checkIfUserProfileRowExists(userId) {
-    const q = "SELECT * FROM user_profiles WHERE user_id = $1";
+    const q = 'SELECT * FROM user_profiles WHERE user_id = $1';
     const params = [userId];
 
     return db.query(q, params).then(results => {
-        console.log("From check function: ", results.rows);
         if (results.rows.length === 0) {
             return false;
-            // row isn't there...do an INSERT, Lina!
         } else {
             return true;
-            // row exists....do an UPDATE, Lina!
         }
     });
 }
 
 function deleteSignature(user_id) {
-    console.log(user_id);
     const q = `DELETE FROM signatures
     WHERE user_id = $1;`;
     const params = [user_id];

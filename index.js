@@ -61,14 +61,6 @@ function checkPassword(textEnteredInLoginForm, hashedPasswordFromDatabase) {
     });
 }
 
-//add csurf to every route with a form
-// app.use(csurf());
-//
-// app.use(function(req, res, next) {
-//     res.locals.csrfToken = req.csrfToken();
-//     next();
-// });
-
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.engine('handlebars', hb());
@@ -99,7 +91,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/', (req, res) => {
-    console.log(req.session.userId);
     if (req.body.signature) {
         insertSignatures(req.body.signature, req.session.userId)
             .then(results => {
@@ -120,12 +111,8 @@ app.post('/', (req, res) => {
     }
 });
 
-///ADD countSignatures TO THE THANK YOU PAGE!
-
 app.get('/thankyou', (req, res) => {
-    // console.log(req.session);
     if (req.session.signatureId && req.session.userId) {
-        //console.log(req.session.signatureId);
         getSignature(req.session.userId)
             .then(idResults => {
                 res.render('thankyou', {
@@ -156,10 +143,7 @@ app.post('/register', csrfProtection, (req, res) => {
                 ).then(insertRegistrationInfo => {
                     id = insertRegistrationInfo.rows[0].id;
                     req.session.userId = id;
-                    // console.log(
-                    //     "This is your id: " + insertRegistrationInfo.rows[0].id
-                    // );
-                    // console.log("You've registered");
+
                     res.redirect('/profile');
                 })
             )
@@ -204,7 +188,6 @@ app.post('/login', csrfProtection, (req, res) => {
                         req.session.userId = userId;
                         checkIfSigned(req.session.userId).then(results => {
                             if (results.rows[0]) {
-                                console.log(results.rows[0]);
                                 req.session.signatureId = results.rows[0].id;
 
                                 res.redirect('/thankyou');
@@ -221,7 +204,6 @@ app.post('/login', csrfProtection, (req, res) => {
                 })
             )
             .catch(err => {
-                console.log('We are here 2', err);
                 res.render('login', {
                     error: true
                 });
@@ -236,7 +218,6 @@ app.post('/login', csrfProtection, (req, res) => {
 
 app.get('/signed', (req, res) => {
     getSignedNames().then(signedNames => {
-        console.log(signedNames);
         res.render('signed', {
             layout: 'main',
             signedNames: signedNames.rows
@@ -246,7 +227,6 @@ app.get('/signed', (req, res) => {
 
 app.get('/petition/signers', (req, res) => {
     getSignedInfo().then(signedInfo => {
-        console.log(signedInfo);
         res.render('petition/signers', {
             layout: 'main',
             signedInfo: signedInfo.rows,
@@ -318,19 +298,13 @@ app.get('/profile/edit', csrfProtection, (req, res) => {
 });
 
 app.post('/profile/edit', csrfProtection, (req, res) => {
-    //we run an update on two tables
-    //one of the conditions: if a user doesn't have a row for optional info, (SELECT and then: if they don't have a row => INSERT, if they do -> UPDATE)
-    //or add a row as soon as an user is created
-
     const { first, last, email, password, age, city, url } = req.body;
 
     const { userId } = req.session;
 
     function checkAndInsterUserProfiles() {
         checkIfUserProfileRowExists(userId).then(doesExist => {
-            console.log('Does exist ', doesExist);
             if (!doesExist) {
-                // console.log("Row does not exist");
                 if (isNaN(age)) {
                     res.redirect('/profile/edit');
                 } else {
@@ -338,12 +312,11 @@ app.post('/profile/edit', csrfProtection, (req, res) => {
                     res.redirect('/');
                 }
             } else {
-                console.log('Req.body inside of checkUserInfo ', req.body);
                 if (isNaN(age)) {
                     res.redirect('/profile/edit');
                 } else {
                     updateProfileInfoUsers(age, city, url, userId);
-                    console.log('Data inserted: ', age, city, url, userId);
+
                     res.redirect('/');
                 }
             }
@@ -366,13 +339,11 @@ app.post('/profile/edit', csrfProtection, (req, res) => {
 });
 
 app.get('/profile/delete', (req, res) => {
-    console.log(req.session);
     deleteSignature(req.session.userId)
         .then(() => delete req.session.signatureId)
-        // .then(() => console.log("We have deleted", req.body.signature))
+
         .then(() => res.redirect('/'))
         .catch(err => {
-            console.log('Something went wrong', err);
             res.render('thankyou', {
                 layout: 'main'
             });
@@ -380,7 +351,6 @@ app.get('/profile/delete', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    console.log("You've logged out");
     req.session = null;
     res.redirect('/login');
 });
