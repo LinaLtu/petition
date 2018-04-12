@@ -18,7 +18,6 @@ On the 6th week of Full Stack JavaScript Web Development coding bootcamp at SPIC
 * Node.js and Express.js
 * Express Handlebars
 * PostgreSQL Database
-* Redis
 * Canvas
 
 While working on the project, I became more comfortable with Express.js and Express Handlebar. I also had an opportunity to practice making a responsive design and figure out how to make it possible to sign the petition on a touch screen.
